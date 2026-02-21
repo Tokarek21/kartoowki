@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symulator Nauczyciela: Kartkówki</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #game-container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 300px; text-align: center; }
+        .paper { background: #fff; border: 2px solid #ddd; padding: 20px; margin: 20px 0; min-height: 100px; position: relative; border-left: 5px solid #ff4444; }
+        .equation { font-size: 24px; font-weight: bold; color: #333; }
+        .answer { font-size: 32px; color: #007bff; font-family: 'Comic Sans MS', cursive; }
+        .controls { display: flex; justify-content: space-between; gap: 10px; }
+        button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-correct { background: #28a745; color: white; }
+        .btn-wrong { background: #dc3545; color: white; }
+        button:hover { opacity: 0.8; transform: scale(1.05); }
+        .score { font-size: 18px; margin-bottom: 10px; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>Oceń Kartkówkę</h1>
+        <div class="score">Punkty: <span id="score-val">0</span></div>
+        
+        <div class="paper" id="paper">
+            <div class="equation" id="math-question">2 + 2 =</div>
+            <div class="answer" id="student-answer">4</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-wrong" onclick="check(false)">ŹLE</button>
+            <button class="btn-correct" onclick="check(true)">DOBRZE</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let currentCorrect = false;
+
+        function generateTask() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            const realResult = a + b;
+            
+            // 50% szans na pokazanie poprawnej odpowiedzi
+            const isActuallyCorrect = Math.random() > 0.5;
+            const displayResult = isActuallyCorrect ? realResult : realResult + (Math.random() > 0.5 ? 1 : -1);
+
+            document.getElementById('math-question').innerText = `${a} + ${b} =`;
+            document.getElementById('student-answer').innerText = displayResult;
+            
+            currentCorrect = isActuallyCorrect;
+        }
+
+        function check(userChoice) {
+            if (userChoice === currentCorrect) {
+                score++;
+                document.getElementById('score-val').innerText = score;
+                document.getElementById('paper').style.borderColor = "#28a745";
+            } else {
+                document.getElementById('paper').style.borderColor = "#dc3545";
+            }
+            
+            setTimeout(() => {
+                document.getElementById('paper').style.borderColor = "#ddd";
+                generateTask();
+            }, 300);
+        }
+
+        // Start gry
+        generateTask();
+    </script>
+</body>
+</html>
