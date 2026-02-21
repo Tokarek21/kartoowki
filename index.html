@@ -3,195 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUPER NAUCZYCIEL 3.0</title>
+    <title>NAUCZYCIEL PRO 4.0</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #ffffff;
-            --primary: #6366f1;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --text-dark: #1e293b;
+            --bg: #0f172a; --card: #ffffff; --primary: #6366f1;
+            --success: #22c55e; --danger: #ef4444; --text: #1e293b;
         }
-
         body {
-            font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            font-family: 'Poppins', sans-serif; background: var(--bg);
+            color: var(--text); display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; overflow: hidden;
         }
-
         #app {
-            background: var(--card-bg);
-            color: var(--text-dark);
-            padding: 40px;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 480px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            position: relative;
+            background: var(--card); padding: 30px; border-radius: 30px;
+            width: 90%; max-width: 450px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative;
         }
-
-        .logo { font-size: 3.5rem; display: block; margin-bottom: 10px; }
-        .blinker { animation: neon 1.5s infinite alternate; color: #94a3b8; font-size: 0.8rem; margin-top: 20px; font-weight: bold; }
-        @keyframes neon { from { opacity: 0.4; } to { opacity: 1; text-shadow: 0 0 10px #6366f1; } }
-
-        .btn-main {
-            background: var(--primary); color: white; border: none; padding: 16px;
-            border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer;
-            transition: 0.3s; margin-bottom: 10px;
+        .logo { font-size: 4rem; margin: 0; }
+        .hidden { display: none !important; }
+        
+        /* Przyciski */
+        .btn {
+            width: 100%; padding: 15px; margin: 10px 0; border: none;
+            border-radius: 15px; font-weight: bold; cursor: pointer;
+            transition: 0.2s; font-size: 1rem;
         }
-        .btn-main:hover { transform: scale(1.02); background: #4f46e5; }
-
+        .btn-main { background: var(--primary); color: white; }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(99,102,241,0.4); }
+        
+        /* Kartkówka */
         .paper {
-            background: #f8fafc; border-left: 6px solid var(--primary);
-            padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0;
-            position: relative; overflow: hidden;
+            background: #f8fafc; border-left: 8px solid var(--primary);
+            padding: 20px; margin: 20px 0; border-radius: 15px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
+        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 
-        /* Styl Switche */
-        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 1.1rem; }
+        /* Pasek Energii (Kofeina) */
+        .energy-bar { width: 100%; height: 100%; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        #energy-fill { width: 100%; height: 10px; background: #b45309; transition: 0.3s; }
+
+        /* Przełącznik */
         .switch { position: relative; width: 50px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #cbd5e1; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--danger); transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background: white; transition: .3s; border-radius: 50%; }
         input:checked + .slider { background: var(--success); }
-        input:not(:checked) + .slider { background: var(--danger); }
         input:checked + .slider:before { transform: translateX(24px); }
 
-        /* Efekt Skreślenia */
-        .scratch { position: absolute; color: var(--danger); font-size: 2rem; font-weight: bold; pointer-events: none; transform: rotate(-15deg); opacity: 0; transition: 0.2s; }
-
-        .grade-stamp {
-            font-size: 6rem; font-weight: 900; color: var(--danger);
-            font-family: 'Courier New', monospace;
-            animation: stamp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes stamp { 0% { transform: scale(4) rotate(0); opacity: 0; } 100% { transform: scale(1) rotate(-15deg); opacity: 1; } }
-
-        .hidden { display: none; }
-        .comment { font-style: italic; color: #64748b; margin-top: 10px; }
+        .grade { font-size: 7rem; font-weight: 900; color: var(--danger); transform: rotate(-15deg); margin: 20px 0; }
+        .blinker { animation: blink 1s infinite alternate; font-size: 0.8rem; color: #64748b; margin-top: 15px; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="menu">
-        <span class="logo">👨‍🏫</span>
-        <h2 style="margin:0 0 20px 0">BIURO NAUCZYCIELA</h2>
-        <button class="btn-main" onclick="startMode('single')">SZYBKI TEST</button>
-        <button class="btn-main" onclick="startMode('multi')">CAŁA KARTKÓWKA</button>
-        <div class="blinker">SYSTEM NIE ZAPISUJE DANYCH</div>
+        <p class="logo">☕</p>
+        <h1 style="margin: 0">POKÓJ NAUCZYCIELSKI</h1>
+        <div class="energy-bar"><div id="energy-fill"></div></div>
+        <p style="font-size: 0.8rem; color: #64748b; margin: 0">Poziom kofeiny</p>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn btn-main" onclick="startSingle()">SZYBKIE PYTANIE</button>
+            <button class="btn btn-main" onclick="startMulti()">PEŁNA KARTKÓWKA</button>
+        </div>
+        <div class="blinker">UWAGA: DANE NIE ZAPISUJĄ SIĘ</div>
     </div>
 
-    <div id="game-view" class="hidden">
-        <h3 id="info-header" style="color:var(--primary)">Matematyka</h3>
-        <div id="paper-area" class="paper"></div>
-        <div id="single-controls" class="hidden" style="display:flex; gap:10px">
-            <button onclick="checkSingle(false)" style="background:var(--danger); color:white; flex:1; padding:15px; border-radius:10px; border:none; font-weight:bold">ŹLE</button>
-            <button onclick="checkSingle(true)" style="background:var(--success); color:white; flex:1; padding:15px; border-radius:10px; border:none; font-weight:bold">DOBRZE</button>
+    <div id="game" class="hidden">
+        <h2 id="subject-label" style="color: var(--primary); margin-bottom: 5px;">PRZEDMIOT</h2>
+        <div id="paper-content" class="paper"></div>
+        
+        <div id="single-ui" class="hidden" style="display: flex; gap: 10px;">
+            <button class="btn" style="background: var(--danger); color: white;" onclick="judge(false)">ŹLE</button>
+            <button class="btn" style="background: var(--success); color: white;" onclick="judge(true)">DOBRZE</button>
         </div>
-        <button id="finish-btn" class="btn-main hidden" onclick="finishMulti()">WYSTAW OCENĘ</button>
+        
+        <button id="multi-ui" class="btn btn-main hidden" onclick="evaluateSheet()">WYSTAW OCENĘ</button>
+        <button class="btn" style="background:none; color: #94a3b8;" onclick="location.reload()">ANULUJ</button>
     </div>
 
     <div id="summary" class="hidden">
-        <div id="grade-box" class="grade-stamp">1</div>
-        <p id="stats-text"></p>
-        <p id="teacher-comment" class="comment"></p>
-        <button class="btn-main" onclick="location.reload()">WRÓĆ DO MENU</button>
+        <h2 id="summary-title">OCENA:</h2>
+        <div id="final-grade" class="grade">1</div>
+        <p id="comment" style="font-style: italic;"></p>
+        <button class="btn btn-main" onclick="location.reload()">KOLEJNA KLASA</button>
     </div>
 </div>
 
 <script>
-    const imiona = ["Kuba", "Ania", "Kacper", "Maja", "Szymon", "Lena", "Oliwier", "Zuzia"];
-    const slowka = [
-        {q: "Rzaba", a: "Żaba", ok: false},
-        {q: "Praca", a: "Praca", ok: true},
-        {q: "Ktury", a: "Który", ok: false},
-        {q: "Szkoła", a: "Szkoła", ok: true},
-        {q: "Morze", a: "Może", ok: true} // dwuznaczne, ale przyjmijmy poprawne
-    ];
-    
-    let currentMode = '';
-    let tasks = [];
+    let energy = 100;
+    let currentTaskCorrect = false;
+    let multiAnswerKey = [];
 
-    function startMode(mode) {
-        currentMode = mode;
-        document.getElementById('menu').classList.add('hidden');
-        document.getElementById('game-view').classList.remove('hidden');
+    const db = {
+        pl: [{q: "Rzaba", a: "Żaba", ok: false}, {q: "Szkoła", a: "Szkoła", ok: true}, {q: "Chmura", a: "Hmura", ok: false}],
+        math: [{q: "5+5", res: "10", ok: true}, {q: "2+8", res: "11", ok: false}, {q: "3x3", res: "9", ok: true}],
+        en: [{q: "Dog", a: "Pies", ok: true}, {q: "Apple", a: "Gruszka", ok: false}, {q: "Cat", a: "Kot", ok: true}]
+    };
+
+    function updateEnergy(val) {
+        energy = Math.max(0, Math.min(100, energy + val));
+        document.getElementById('energy-fill').style.width = energy + '%';
+        if(energy <= 0) {
+            alert("Zasypiasz nad biurkiem! Koniec pracy.");
+            location.reload();
+        }
+    }
+
+    function startSingle() {
+        showView('game');
+        document.getElementById('single-ui').classList.remove('hidden');
+        document.getElementById('multi-ui').classList.add('hidden');
+        nextSingle();
+    }
+
+    function nextSingle() {
+        const subjects = ['pl', 'math', 'en'];
+        const sub = subjects[Math.floor(Math.random()*subjects.length)];
+        const task = db[sub][Math.floor(Math.random()*db[sub].length)];
         
-        if(mode === 'single') {
-            document.getElementById('single-controls').classList.remove('hidden');
-            generateSingle();
-        } else {
-            document.getElementById('finish-btn').classList.remove('hidden');
-            generateMulti();
-        }
-    }
-
-    function generateSingle() {
-        const area = document.getElementById('paper-area');
-        const isMath = Math.random() > 0.5;
-        document.getElementById('info-header').innerText = isMath ? "Matematyka" : "Język Polski";
+        document.getElementById('subject-label').innerText = sub.toUpperCase();
+        const content = document.getElementById('paper-content');
         
-        if(isMath) {
-            const a = Math.floor(Math.random()*10)+1;
-            const b = Math.floor(Math.random()*10)+1;
-            const ok = Math.random() > 0.5;
-            const res = ok ? a+b : a+b+1;
-            area.innerHTML = `<h2>${a} + ${b} =</h2><h1 style="color:var(--primary)">${res}</h1>`;
-            tasks = [ok];
-        } else {
-            const s = slowka[Math.floor(Math.random()*slowka.length)];
-            area.innerHTML = `<h2>Jak zapisać:</h2><h1 style="color:var(--primary)">${s.q}</h1>`;
-            tasks = [s.ok];
-        }
+        if(sub === 'math') content.innerHTML = `<h1>${task.q} = ${task.res}</h1>`;
+        else if(sub === 'en') content.innerHTML = `<h3>Tłumaczenie:</h3><h1>${task.q} = ${task.a}</h1>`;
+        else content.innerHTML = `<h3>Pisownia:</h3><h1>${task.q}</h1>`;
+        
+        currentTaskCorrect = task.ok;
     }
 
-    function checkSingle(userChoice) {
-        if(userChoice === tasks[0]) {
-            confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-            generateSingle();
+    function judge(userChoice) {
+        if(userChoice === currentTaskCorrect) {
+            confetti({ particleCount: 40, spread: 50 });
+            updateEnergy(5);
         } else {
-            alert("Błąd! Uważaj co oceniasz!");
-            generateSingle();
+            updateEnergy(-20);
+            document.body.style.backgroundColor = "#450a0a";
+            setTimeout(() => document.body.style.backgroundColor = "#0f172a", 200);
         }
+        nextSingle();
     }
 
-    function generateMulti() {
-        const name = imiona[Math.floor(Math.random()*imiona.length)];
-        document.getElementById('info-header').innerText = `Kartkówka: ${name}`;
-        const area = document.getElementById('paper-area');
-        area.innerHTML = '';
-        tasks = [];
-
+    function startMulti() {
+        showView('game');
+        document.getElementById('multi-ui').classList.remove('hidden');
+        document.getElementById('single-ui').classList.add('hidden');
+        
+        const content = document.getElementById('paper-content');
+        content.innerHTML = '';
+        multiAnswerKey = [];
+        
         for(let i=0; i<5; i++) {
-            const isMath = Math.random() > 0.5;
-            let qText, isCorrect;
+            const sub = ['pl', 'math', 'en'][Math.floor(Math.random()*3)];
+            const task = db[sub][Math.floor(Math.random()*db[sub].length)];
+            multiAnswerKey.push(task.ok);
             
-            if(isMath) {
-                const a = Math.floor(Math.random()*10)+1;
-                const b = Math.floor(Math.random()*10)+1;
-                isCorrect = Math.random() > 0.5;
-                qText = `${a}+${b}=${isCorrect ? a+b : a+b+1}`;
-            } else {
-                const s = slowka[Math.floor(Math.random()*slowka.length)];
-                qText = `Słowo: ${s.q}`;
-                isCorrect = s.ok;
-            }
+            let txt = sub === 'math' ? `${task.q}=${task.res}` : `${task.q}=${task.a || ''}`;
+            if(sub === 'pl') txt = task.q;
 
-            tasks.push(isCorrect);
-            area.innerHTML += `
+            content.innerHTML += `
                 <div class="row">
-                    <span>${qText}</span>
+                    <span style="font-size:0.9rem">${txt}</span>
                     <label class="switch">
-                        <input type="checkbox" id="t-${i}" checked>
+                        <input type="checkbox" id="check-${i}" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -199,34 +178,31 @@
         }
     }
 
-    function finishMulti() {
+    function evaluateSheet() {
         let score = 0;
-        tasks.forEach((ans, i) => {
-            if(document.getElementById(`t-${i}`).checked === ans) score++;
+        multiAnswerKey.forEach((correct, i) => {
+            if(document.getElementById(`check-${i}`).checked === correct) score++;
         });
 
-        const grades = [1, 1, 2, 3, 4, 6];
-        const comments = [
-            "Katastrofa... Zapraszam z rodzicami.",
-            "Nic nie umiesz!",
-            "Ledwo, ledwo. Postaraj się bardziej.",
-            "Może być, ale stać Cię na więcej.",
-            "Bardzo ładnie!",
-            "Geniusz! Wzorowy nauczyciel!"
-        ];
-
-        document.getElementById('game-view').classList.add('hidden');
-        document.getElementById('summary').classList.remove('hidden');
+        const grades = [1, 1, 2, 3, 5, 6];
+        const comments = ["Katastrofa!", "Słabo...", "Może być.", "Dobrze!", "Super!", "Wzorowo!"];
         
-        const finalGrade = grades[score];
-        document.getElementById('grade-box').innerText = finalGrade;
-        document.getElementById('stats-text').innerText = `Poprawne oceny: ${score}/5`;
-        document.getElementById('teacher-comment').innerText = comments[score];
-
-        if(finalGrade === 6) {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        }
+        showView('summary');
+        document.getElementById('final-grade').innerText = grades[score];
+        document.getElementById('comment').innerText = comments[score];
+        
+        if(grades[score] >= 5) confetti({ particleCount: 150, spread: 100 });
     }
+
+    function showView(viewId) {
+        document.getElementById('menu').classList.add('hidden');
+        document.getElementById('game').classList.add('hidden');
+        document.getElementById('summary').classList.add('hidden');
+        document.getElementById(viewId).classList.remove('hidden');
+    }
+
+    // Inicjalizacja kofeiny
+    updateEnergy(0);
 </script>
 </body>
 </html>
