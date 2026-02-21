@@ -3,74 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Symulator Nauczyciela: Kartkówki</title>
+    <title>OCENIANIE KARTKÓWEK</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        #game-container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 300px; text-align: center; }
-        .paper { background: #fff; border: 2px solid #ddd; padding: 20px; margin: 20px 0; min-height: 100px; position: relative; border-left: 5px solid #ff4444; }
-        .equation { font-size: 24px; font-weight: bold; color: #333; }
-        .answer { font-size: 32px; color: #007bff; font-family: 'Comic Sans MS', cursive; }
-        .controls { display: flex; justify-content: space-between; gap: 10px; }
-        button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-correct { background: #28a745; color: white; }
-        .btn-wrong { background: #dc3545; color: white; }
-        button:hover { opacity: 0.8; transform: scale(1.05); }
-        .score { font-size: 18px; margin-bottom: 10px; color: #555; }
+        :root { --primary: #4a90e2; --success: #28a745; --danger: #dc3545; }
+        body { font-family: 'Arial', sans-serif; background: #2c3e50; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow-x: hidden; }
+        #app { background: #ecf0f1; color: #333; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+        
+        /* Menu */
+        .logo { font-size: 3rem; margin-bottom: 20px; text-shadow: 2px 2px #bdc3c7; display: block; }
+        .blinker { animation: blink 1s infinite; color: #7f8c8d; font-size: 0.8rem; margin-top: 20px; font-weight: bold; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+        
+        .menu-btns { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+        button { padding: 15px; font-size: 1.1rem; border: none; border-radius: 10px; cursor: pointer; transition: 0.3s; font-weight: bold; text-transform: uppercase; }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-back { background: #95a5a6; color: white; margin-top: 20px; width: 100%; }
+        
+        /* Gra */
+        .hidden { display: none; }
+        .paper { background: white; border-left: 5px solid var(--danger); padding: 20px; margin: 20px 0; box-shadow: 5px 5px 15px rgba(0,0,0,0.1); text-align: left; }
+        .equation-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px dashed #ccc; }
+        .grade-display { font-size: 5rem; font-weight: bold; color: var(--danger); transform: rotate(-15deg); margin: 20px 0; }
+        
+        /* Przełączniki (Switch) */
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--danger); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(26px); }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <h1>Oceń Kartkówkę</h1>
-        <div class="score">Punkty: <span id="score-val">0</span></div>
-        
-        <div class="paper" id="paper">
-            <div class="equation" id="math-question">2 + 2 =</div>
-            <div class="answer" id="student-answer">4</div>
+<div id="app">
+    <div id="menu">
+        <div class="logo">📝 KARTKÓWKI</div>
+        <div class="menu-btns">
+            <button class="btn-main" onclick="startSingle()">Pojedyncze Zadania</button>
+            <button class="btn-main" onclick="startMulti()">Pełna Kartkówka</button>
         </div>
-
-        <div class="controls">
-            <button class="btn-wrong" onclick="check(false)">ŹLE</button>
-            <button class="btn-correct" onclick="check(true)">DOBRZE</button>
-        </div>
+        <div class="blinker">UWAGA: DANE NIE ZAPISUJĄ SIĘ!</div>
     </div>
 
-    <script>
-        let score = 0;
-        let currentCorrect = false;
+    <div id="single-mode" class="hidden">
+        <div id="score-box">Punkty: <span id="s-score">0</span></div>
+        <div class="paper">
+            <h2 id="s-eq">2 + 2 = ?</h2>
+            <h1 id="s-ans" style="font-family: 'Comic Sans MS'">4</h1>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-back" style="background:var(--danger)" onclick="checkSingle(false)">ŹLE</button>
+            <button class="btn-back" style="background:var(--success)" onclick="checkSingle(true)">DOBRZE</button>
+        </div>
+        <button class="btn-back" onclick="showMenu()">POWRÓT</button>
+    </div>
 
-        function generateTask() {
+    <div id="multi-mode" class="hidden">
+        <h3>Arkusz ucznia: Jan Kowalski</h3>
+        <div class="paper" id="multi-paper">
+            </div>
+        <button class="btn-main" style="width:100%" onclick="finishMulti()">WYSTAW OCENĘ</button>
+    </div>
+
+    <div id="summary" class="hidden">
+        <h2>Wynik sprawdzianu:</h2>
+        <div id="final-grade" class="grade-display">1</div>
+        <p id="final-stats">0/5 poprawnych</p>
+        <button class="btn-main" onclick="showMenu()">WRÓĆ DO MENU</button>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let currentTask = {};
+    let multiTasks = [];
+
+    function showMenu() {
+        document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
+        document.getElementById('menu').classList.remove('hidden');
+    }
+
+    // --- TRYB POJEDYNCZY ---
+    function startSingle() {
+        document.getElementById('menu').classList.add('hidden');
+        document.getElementById('single-mode').classList.remove('hidden');
+        score = 0;
+        document.getElementById('s-score').innerText = score;
+        nextSingle();
+    }
+
+    function nextSingle() {
+        const a = Math.floor(Math.random() * 10) + 1;
+        const b = Math.floor(Math.random() * 10) + 1;
+        const correct = a + b;
+        const isOk = Math.random() > 0.5;
+        currentTask = { isCorrect: isOk };
+        document.getElementById('s-eq').innerText = `${a} + ${b} =`;
+        document.getElementById('s-ans').innerText = isOk ? correct : correct + 2;
+    }
+
+    function checkSingle(choice) {
+        if(choice === currentTask.isCorrect) score++;
+        document.getElementById('s-score').innerText = score;
+        nextSingle();
+    }
+
+    // --- TRYB PEŁNY ---
+    function startMulti() {
+        document.getElementById('menu').classList.add('hidden');
+        document.getElementById('multi-mode').classList.remove('hidden');
+        const container = document.getElementById('multi-paper');
+        container.innerHTML = '';
+        multiTasks = [];
+
+        for(let i=0; i<5; i++) {
             const a = Math.floor(Math.random() * 10) + 1;
             const b = Math.floor(Math.random() * 10) + 1;
-            const realResult = a + b;
+            const correct = a + b;
+            const isOk = Math.random() > 0.5;
+            const display = isOk ? correct : correct + 1;
             
-            // 50% szans na pokazanie poprawnej odpowiedzi
-            const isActuallyCorrect = Math.random() > 0.5;
-            const displayResult = isActuallyCorrect ? realResult : realResult + (Math.random() > 0.5 ? 1 : -1);
-
-            document.getElementById('math-question').innerText = `${a} + ${b} =`;
-            document.getElementById('student-answer').innerText = displayResult;
+            multiTasks.push(isOk);
             
-            currentCorrect = isActuallyCorrect;
+            container.innerHTML += `
+                <div class="equation-row">
+                    <span>${a} + ${b} = <b>${display}</b></span>
+                    <label class="switch">
+                        <input type="checkbox" id="task-${i}">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            `;
         }
+    }
 
-        function check(userChoice) {
-            if (userChoice === currentCorrect) {
-                score++;
-                document.getElementById('score-val').innerText = score;
-                document.getElementById('paper').style.borderColor = "#28a745";
-            } else {
-                document.getElementById('paper').style.borderColor = "#dc3545";
-            }
-            
-            setTimeout(() => {
-                document.getElementById('paper').style.borderColor = "#ddd";
-                generateTask();
-            }, 300);
-        }
+    function finishMulti() {
+        let correctGuesses = 0;
+        multiTasks.forEach((isActuallyCorrect, index) => {
+            const userSaysCorrect = document.getElementById(`task-${index}`).checked;
+            if(userSaysCorrect === isActuallyCorrect) correctGuesses++;
+        });
 
-        // Start gry
-        generateTask();
-    </script>
+        let grade = 1;
+        if(correctGuesses === 5) grade = 6;
+        else if(correctGuesses === 4) grade = 4;
+        else if(correctGuesses === 3) grade = 3;
+        else if(correctGuesses === 2) grade = 2;
+
+        document.getElementById('multi-mode').classList.add('hidden');
+        document.getElementById('summary').classList.remove('hidden');
+        document.getElementById('final-grade').innerText = grade;
+        document.getElementById('final-stats').innerText = `${correctGuesses} / 5 poprawnych ocen`;
+    }
+</script>
+
 </body>
 </html>
